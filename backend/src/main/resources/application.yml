@@ -1,0 +1,48 @@
+# Configuration for the app.
+# ${DB_URL:default} means: use the environment variable DB_URL if it exists,
+# otherwise use the default. Locally we use the defaults; when we deploy,
+# the hosting platform sets the real values (so no secrets live in the code).
+
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: mini-hrms
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/hrms}
+    username: ${DB_USER:hrms}
+    password: ${DB_PASSWORD:hrms}
+    hikari:
+      maximum-pool-size: 5    # free hosted databases allow few connections
+
+  jpa:
+    hibernate:
+      # "validate" = Hibernate only CHECKS that our Java entities match the tables.
+      # It never creates or changes tables itself. Flyway owns the schema.
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    # Runs every file in src/main/resources/db/migration, in version order (V1, V2...)
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 2MB      # CSV uploads larger than this are rejected
+      max-request-size: 2MB
+
+app:
+  jwt:
+    # Key used to sign login tokens. MUST be at least 32 characters.
+    # In production this comes from an environment variable, never from Git.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-dev-only-secret-change-me}
+    ttl-hours: 8              # a token is valid for 8 hours, then the user logs in again
+  cors:
+    # Which frontend addresses may call this API (comma-separated).
+    # On Render, set CORS_ALLOWED_ORIGINS to your Vercel address.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+  seed-demo-data: ${SEED_DEMO_DATA:true}
+  import:
+    default-password: ${IMPORT_DEFAULT_PASSWORD:Welcome@123}
