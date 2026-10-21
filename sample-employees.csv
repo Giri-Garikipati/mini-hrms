@@ -1,0 +1,4 @@
+name,email,role,department,manager_email
+Kiran Das,kiran@demo.com,EMPLOYEE,Engineering,manager@demo.com
+Meena Iyer,meena@demo.com,MANAGER,Sales,admin@demo.com
+Rahul Verma,rahul@demo.com,EMPLOYEE,Sales,

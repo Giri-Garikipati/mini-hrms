@@ -1,0 +1,5 @@
+name,email,role,department,manager_email
+Sita Nair,sita@demo.com,EMPLOYEE,Engineering,manager@demo.com
+,blank-name@demo.com,EMPLOYEE,Engineering,
+Vikram Rao,not-an-email,EMPLOYEE,Engineering,
+Anil Kapoor,anil@demo.com,INTERN,Marketing,priya@demo.com

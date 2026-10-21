@@ -1,0 +1,45 @@
+# Starts the whole app with ONE command:   docker compose up --build
+# Then open http://localhost:3000
+#
+# Three containers:
+#   db       - PostgreSQL database
+#   backend  - Spring Boot API (port 8080)
+#   frontend - React app served by nginx (port 3000), forwards /api to backend
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: hrms
+      POSTGRES_USER: hrms
+      POSTGRES_PASSWORD: hrms
+    volumes:
+      - hrms-data:/var/lib/postgresql/data   # keeps your data between restarts
+    healthcheck:                             # backend waits until the DB is really ready
+      test: ["CMD-SHELL", "pg_isready -U hrms -d hrms"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/hrms
+      DB_USER: hrms
+      DB_PASSWORD: hrms
+      JWT_SECRET: local-docker-secret-change-me-for-production-12345
+      SEED_DEMO_DATA: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  hrms-data:
